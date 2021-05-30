@@ -9,11 +9,8 @@ def get_related_posts_count(tag):
 
 def get_popular_posts():
     popular_posts_to_show = 5
-
     posts = Post.objects.annotate(post_likes=Count('likes'))
-    post_likes = {post: post.post_likes for post in posts}
-    most_popular_posts = sorted(post_likes, key=post_likes.get,
-        reverse=True)[:popular_posts_to_show]
+    most_popular_posts = posts.order_by('-post_likes')[:5]
     return most_popular_posts
 
 
