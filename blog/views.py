@@ -143,6 +143,7 @@ def tag_filter(request, tag_title):
     related_posts = (
         tag.posts
         .annotate(comments_count=Count('comments'))
+        .prefetch_related('author')
         .prefetch_related(prefetch_tags)[:20]
     )
 
