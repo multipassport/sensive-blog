@@ -1,4 +1,5 @@
 from django.db.models import Count, Prefetch
+from django.http import HttpResponseNotFound
 from django.shortcuts import render
 from blog.models import Comment, Post, Tag
 
@@ -60,12 +61,15 @@ def index(request):
 def post_detail(request, slug):
     prefetch_tags = Prefetch('tags', Tag.objects.annotate(posts_count=Count('posts')))
 
-    post = (
-        Post.objects
-        .annotate(likes_count=Count('likes'))
-        .prefetch_related('author')
-        .prefetch_related(prefetch_tags)
-        .get(slug=slug))
+    try:
+        post = (
+            Post.objects
+            .annotate(likes_count=Count('likes'))
+            .prefetch_related('author')
+            .prefetch_related(prefetch_tags)
+            .get(slug=slug))
+    except Post.DoesNotExist:
+        return HttpResponseNotFound('<h1>Пост не найден</h1>')
 
     comments = Comment.objects.filter(post=post).prefetch_related('author')
 
@@ -112,7 +116,10 @@ def post_detail(request, slug):
 
 
 def tag_filter(request, tag_title):
-    tag = Tag.objects.get(title=tag_title)
+    try:
+        tag = Tag.objects.get(title=tag_title)
+    except Tag.DoesNotExist:
+        return HttpResponseNotFound('<h1>Тег не найден</h1>')
 
     most_popular_tags = Tag.objects.popular()[:5]
 
