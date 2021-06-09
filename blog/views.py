@@ -1,4 +1,4 @@
-from django.db.models import Count, Prefetch
+from django.db.models import Count
 from django.http import HttpResponseNotFound
 from django.shortcuts import render
 from blog.models import Comment, Post, Tag
