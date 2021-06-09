@@ -28,7 +28,7 @@ def serialize_tag(tag):
 
 
 def index(request):
-    prefetch_tags = Prefetch('tags', Tag.objects.annotate(posts_count=Count('posts')))
+    prefetch_tags = Tag.objects.prefetch_tags()
 
     most_popular_posts = (
         Post.objects
@@ -59,7 +59,7 @@ def index(request):
 
 
 def post_detail(request, slug):
-    prefetch_tags = Prefetch('tags', Tag.objects.annotate(posts_count=Count('posts')))
+    prefetch_tags = Tag.objects.prefetch_tags()
 
     try:
         post = (
@@ -123,7 +123,7 @@ def tag_filter(request, tag_title):
 
     most_popular_tags = Tag.objects.popular()[:5]
 
-    prefetch_tags = Prefetch('tags', Tag.objects.annotate(posts_count=Count('posts')))
+    prefetch_tags = Tag.objects.prefetch_tags()
 
     most_popular_posts = (
         Post.objects
